@@ -166,7 +166,7 @@ app.put("/auth/edit/:id", checkToken, async (req, res) => {
 
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
-const port = process.env.PORT || 8081;
+const Port = process.env.PORT || 8081;
 
 mongoose
   .connect(
@@ -174,7 +174,7 @@ mongoose
   )
   .then(() => {
     console.log("Conectou ao banco!");
-    app.listen(port);
-    console.log(`Servidor rodando na porta: ${port}`);
+    app.listen(Port);
+    console.log(`Servidor rodando na porta: ${Port}`);
   })
   .catch((err) => console.log(err));
