@@ -62,17 +62,11 @@ app.post("/auth/register", async (req, res) => {
   // validations
   if (!name) {
     return res.status(422).json({ msg: "O nome é obrigatório!" });
-  }
-
-  if (!email) {
+  } else if (!email) {
     return res.status(422).json({ msg: "O email é obrigatório!" });
-  }
-
-  if (!password) {
+  } else if (!password) {
     return res.status(422).json({ msg: "A senha é obrigatória!" });
-  }
-
-  if (password != confirmpassword) {
+  } else if (password != confirmpassword) {
     return res
       .status(422)
       .json({ msg: "A senha e a confirmação precisam ser iguais!" });
@@ -147,21 +141,23 @@ app.post("/auth/login", async (req, res) => {
 
     res
       .status(200)
-      .json({ currentUser , msg: "Autenticação realizada com sucesso!", token });
+      .json({ currentUser, msg: "Autenticação realizada com sucesso!", token });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
 });
 
-app.put("/auth/edit/:id", checkToken, async (req, res) => {
-  const edit = User.updateOne({ _id: req.params.id }, req.body, (err) => {})
-    .then((response) => {
-      return res.json({
-        error: false,
-        msg: "Usuario editado com sucesso!",
-      });
-    })
-    .catch((error) =>  res.json({error: true, msg: "Erro ao editar usuario"}));
+app.patch("/auth/edit/:id", checkToken, (req, res) => {
+  User.updateOne({ _id: req.params.id }, req.body, function (err, docs) {
+
+
+    if (!err) {
+      res.json({ msg: "dados do usuario editado com sucesso", error: false, docs});
+
+    } else if(err) {
+      res.json({error: true, msg: "Erro ao atualizar os dados do usuario", docs});
+    }
+  });
 });
 
 const dbUser = process.env.DB_USER;
