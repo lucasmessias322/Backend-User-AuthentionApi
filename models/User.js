@@ -8,10 +8,7 @@ const User = mongoose.model('User', {
     {
       titulo: String,
       items: [
-        // {
-        //   questions: String,
-        //   response: String
-        // }
+
       ]
     }
   ]
