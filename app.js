@@ -14,7 +14,7 @@ app.use(express.json());
 const cors = require("cors");
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://englishplusbrasil.herokuapp.com");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,PUT,PATCH,POST,DELETE");
   app.use(cors());
   next();
@@ -149,15 +149,42 @@ app.post("/auth/login", async (req, res) => {
 
 app.patch("/auth/edit/:id", checkToken, (req, res) => {
   User.updateOne({ _id: req.params.id }, req.body, function (err, docs) {
-
-
     if (!err) {
-      res.json({ msg: "dados do usuario editado com sucesso", error: false, docs});
-
-    } else if(err) {
-      res.json({error: true, msg: "Erro ao atualizar os dados do usuario", docs});
+      res.json({
+        msg: "dados do usuario editado com sucesso",
+        error: false,
+        docs,
+      });
+    } else if (err) {
+      res.json({
+        error: true,
+        msg: "Erro ao atualizar os dados do usuario",
+        docs,
+      });
     }
   });
+});
+
+app.get("/memorize/:id/item/:itemid", checkToken, async (req, res) => {
+  const id = req.params.id;
+  const ItemId = req.params.itemid;
+
+  // check if user exists
+  const user = await User.findById(id, "-password");
+
+  // get memorize from user data
+  const { memorize } = user;
+
+  // get memorize index item
+  const Memorize = memorize[ItemId];
+
+  if (!user) {
+    return res.status(404).json({ msg: "Usuário não encontrado!" });
+  } else if (Memorize) {
+    res.status(200).json({ Memorize });
+  } else {
+    res.status(404).json({ msg: "esse memorize não existe!", error: true });
+  }
 });
 
 const dbUser = process.env.DB_USER;
